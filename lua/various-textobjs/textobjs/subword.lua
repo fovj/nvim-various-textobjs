@@ -9,12 +9,12 @@ function M.subword(scope)
 	local initialMode = vim.fn.mode()
 
 	local patterns = {
-		camelOrLowercase = "()%a[%l%d]+([_-]?)",
-		UPPER_CASE = "()%u[%u%d]+([_-]?)",
-		number = "()%d+([_-]?)",
+		camelOrLowercase = "()%a[%l%d]+([%._-]?)",
+		UPPER_CASE = "()%u[%u%d]+([%._-]?)",
+		number = "()%d+([%._-]?)",
 
 		-- e.g., "x" in "xSide" or "sideX" (see #75)
-		singleChar = { "()%a([_-]?)", tieloser = true },
+		singleChar = { "()%a([%._-]?)", tieloser = true },
 	}
 	local row, startCol, endCol = core.selectClosestTextobj(patterns, scope, 0)
 	if not (row and startCol and endCol) then return end
@@ -38,7 +38,7 @@ function M.subword(scope)
 	-- expectation is that `subword` should be more greedy.
 	-- 3. Thus, we check if we are on the last part of a snake_cased word, and if
 	-- so, add the leading `_-` to the selection.
-	local onLastSnakeCasePart = charBefore:find("[_-]") and not lastChar:find("[_-]")
+	local onLastSnakeCasePart = charBefore:find("[%._-]") and not lastChar:find("[%._-]")
 	if scope == "outer" and onLastSnakeCasePart then
 		-- `o`: to start of selection, `h`: select char before `o`: back to end
 		u.normal("oho")
